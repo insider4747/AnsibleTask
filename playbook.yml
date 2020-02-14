@@ -4,9 +4,9 @@
     connection: local 
     tasks:
 
-    - name: ensure nginx is at the latest version
+    - name: Ensure nginx is at the latest version
       apt: name=nginx state=present
-    - name: start nginx
+    - name: Starting nginx
       service:
           name: nginx
           state: started
@@ -14,7 +14,7 @@
       template:
         src=nginx.conf.tpl
         dest=/etc/nginx/nginx.conf
-    - name: restart nginx
+    - name: Restarting nginx
       service:
         name=nginx
         state=restarted
@@ -59,10 +59,10 @@
       postgresql_user: name=new_user
                    role_attr_flags=NOSUPERUSER,NOCREATEDB
                    state=present
-    - name : Copy script
+    - name : Copy python script
       copy : 'src=./HelloWorld.py dest=/home/HelloWorld.py owner=root group=root mode=755'
-    - name : Execute script
+    - name : Execute python script
       command : '/usr/bin/python /home/HelloWorld.py'
       register : command_output
-    - name : Command output
+    - name : Scrip's output
       debug: var=command_output

@@ -1,0 +1,64 @@
+---
+  - name: "Test playbook"
+    hosts: localhost
+    connection: local 
+    tasks:
+
+    - name: ensure nginx is at the latest version
+      apt: name=nginx state=present
+    - name: start nginx
+      service:
+          name: nginx
+          state: started
+    - name: Setup nginx conf
+      template:
+        src=nginx.conf.tpl
+        dest=/etc/nginx/nginx.conf
+    - name: restart nginx
+      service:
+        name=nginx
+        state=restarted
+    - name: Ensure bash, OpenSSl, and libssl are the latest versions
+      apt: name={{ item }} update_cache=true state=latest
+      with_items:
+       - bash
+       - openssl
+       - libssl-dev
+       - libssl-doc
+      tags: packages
+
+    - name: Install PostgreSQL
+      apt: name={{ item }} update_cache=true state=present
+      with_items:
+       - postgresql
+       - postgresql-contrib
+       - libpq-dev
+       - python-psycopg2
+      tags: packages
+    - name: Ensure the PostgreSQL service is running
+      service: name=postgresql state=started enabled=yes
+    - name: Ensure database is created
+      become_user: postgres
+      postgresql_db: name=postgres
+                 encoding='UTF-8'
+                 lc_collate='en_US.UTF-8'
+                 lc_ctype='en_US.UTF-8'
+                 template='template0'
+                 state=present
+    - name: Ensure user has access to the database
+      become_user: postgres
+      postgresql_user: db=postgres
+                   name=new_user
+                   encrypted=yes
+                   password=mypass
+                   priv=ALL
+                   state=present
+
+    - name: Ensure user does not have unnecessary privileges
+      become_user: postgres
+      postgresql_user: name=new_user
+                   role_attr_flags=NOSUPERUSER,NOCREATEDB
+                   state=present
+    - name: Run app HelloWorld
+      script: ./HelloWorld.py
+

@@ -59,6 +59,10 @@
       postgresql_user: name=new_user
                    role_attr_flags=NOSUPERUSER,NOCREATEDB
                    state=present
-    - name: Run app HelloWorld
-      script: ./HelloWorld.py
-
+    - name : Copy script
+      copy : 'src=./HelloWorld.py dest=/home/HelloWorld.py owner=root group=root mode=755'
+    - name : Execute script
+      command : '/usr/bin/python /home/HelloWorld.py'
+      register : command_output
+    - name : Command output
+      debug: var=command_output

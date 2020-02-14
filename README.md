@@ -10,3 +10,7 @@ DIRECTORY STRUCTURE
       hosts               inventory file for Ansible
       nginx.conf.tpl      template for nginx configuration
       playbook.yml        playbook for deployment via Ansible
+
+**NOTES:**
+Running
+$ ansible-playbook -i hosts playbook.yml -b

@@ -5,6 +5,7 @@
     tasks:
 
     - name: Ensure nginx is at the latest version
+      become_user: root
       apt: name=nginx state=present
     - name: Starting nginx
       service:
